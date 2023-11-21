@@ -16,3 +16,4 @@ deployments/*
 
 # IDE
 .idea
+.vscode

@@ -6,7 +6,10 @@ require("@nomiclabs/hardhat-ethers");
 const { ALCHEMY_API_URL, ALCHEMY_API_KEY, METAMASK_PRIVATE_KEY } = process.env;
 
 module.exports = {
-  solidity: "0.8.19",
+  solidity: "0.8.20",
+  paths: {
+    artifacts: './src/artifacts',
+  },
   defaultNetwork: "sepolia",
   networks: {
      hardhat: {},
