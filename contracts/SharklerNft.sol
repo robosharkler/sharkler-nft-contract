@@ -15,6 +15,9 @@ contract SharklerNft is ERC721, ERC721URIStorage, Ownable {
     {}
 
     function safeMint(address to, string memory uri) public onlyOwner {
+        require(existingURIs[uri] != 1, 'NFT already minted!');
+        existingURIs[uri] = 1;
+
         uint256 tokenId = _nextTokenId++;
         _safeMint(to, tokenId);
         _setTokenURI(tokenId, uri);
