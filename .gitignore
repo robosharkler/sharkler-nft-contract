@@ -8,6 +8,7 @@ typechain-types
 # Hardhat files
 cache
 build-info
+src
 
 # Depyloments
 ## Ucomment if you want to save deployments
