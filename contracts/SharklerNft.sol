@@ -15,12 +15,11 @@ contract SharklerNft is ERC721, ERC721URIStorage, Ownable {
 
     function withdraw(
         address recipient
-    ) public onlyOwner payable {
+    ) public onlyOwner {
         uint256 balance = address(this).balance;
         require(balance > 0, "Nothing to withdraw; contract balance empty");
-        require(balance > msg.value, "Nothing to withdraw; contract doesn't have enough balance");
 
-        (bool sent, ) = payable(recipient).call{value: msg.value}("");
+        (bool sent, ) = payable(recipient).call{value: balance}("");
         require(sent, "Failed to send Ether");
     }
 
