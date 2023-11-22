@@ -9,33 +9,47 @@ contract SharklerNft is ERC721, ERC721URIStorage, Ownable {
     uint256 private _nextTokenId;
     mapping(string => uint8) existingURIs;
 
-    constructor(address initialOwner)
-        ERC721("SharklerNft", "SKR")
-        Ownable(initialOwner)
-    {}
+    constructor(
+        address initialOwner
+    ) ERC721("SharklerNft", "SKR") Ownable(initialOwner) {}
 
-    function safeMint(address to, string memory uri) public onlyOwner {
-        require(existingURIs[uri] != 1, 'NFT already minted!');
-        existingURIs[uri] = 1;
+    function withdrawal(
+        address recipient,
+        uint amount
+    ) public payable onlyOwner {
+        uint256 balance = address(this).balance;
+        require(balance > 0, "Nothing to withdraw; contract balance empty");
+        require(balance > amount, "Nothing to withdraw; contract doesn't have enough balance");
 
-        uint256 tokenId = _nextTokenId++;
-        _safeMint(to, tokenId);
-        _setTokenURI(tokenId, uri);
+        (bool sent, ) = payable(recipient).call{value: amount}("");
+        require(sent, "Failed to send Ether");
+    }
+
+    function freeMint(
+        address recipient,
+        string memory metadataURI
+    ) public onlyOwner returns (uint256) {
+        return mintDedup(recipient, metadataURI);
     }
 
     function payToMint(
         address recipient,
         string memory metadataURI
     ) public payable returns (uint256) {
-        require(existingURIs[metadataURI] != 1, 'NFT already minted!');
-        require (msg.value >= 0.05 ether, 'Need to pay up!');
+        require(msg.value >= 0.05 ether, "Need to pay up!");
+        return mintDedup(recipient, metadataURI);
+    }
 
+    function mintDedup(
+        address recipient,
+        string memory metadataURI
+    ) private returns (uint256) {
+        require(existingURIs[metadataURI] != 1, "NFT already minted!");
         uint256 newItemId = _nextTokenId++;
         existingURIs[metadataURI] = 1;
 
-        _mint(recipient, newItemId);
+        _safeMint(recipient, newItemId);
         _setTokenURI(newItemId, metadataURI);
-
         return newItemId;
     }
 
@@ -45,21 +59,15 @@ contract SharklerNft is ERC721, ERC721URIStorage, Ownable {
 
     // The following functions are overrides required by Solidity.
 
-    function tokenURI(uint256 tokenId)
-        public
-        view
-        override(ERC721, ERC721URIStorage)
-        returns (string memory)
-    {
+    function tokenURI(
+        uint256 tokenId
+    ) public view override(ERC721, ERC721URIStorage) returns (string memory) {
         return super.tokenURI(tokenId);
     }
 
-    function supportsInterface(bytes4 interfaceId)
-        public
-        view
-        override(ERC721, ERC721URIStorage)
-        returns (bool)
-    {
+    function supportsInterface(
+        bytes4 interfaceId
+    ) public view override(ERC721, ERC721URIStorage) returns (bool) {
         return super.supportsInterface(interfaceId);
     }
 }
