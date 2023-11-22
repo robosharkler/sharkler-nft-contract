@@ -13,7 +13,7 @@ contract SharklerNft is ERC721, ERC721URIStorage, Ownable {
         address initialOwner
     ) ERC721("SharklerNft", "SKR") Ownable(initialOwner) {}
 
-    function withdrawal(
+    function withdraw(
         address recipient,
         uint amount
     ) public payable onlyOwner {
