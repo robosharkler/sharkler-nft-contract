@@ -63,6 +63,10 @@ contract SharklerNft is ERC721, ERC721URIStorage, Ownable {
         return existingURIs[uri] == 1;
     }
 
+    function count() public view returns (uint256) {
+        return _nextTokenId;
+    }
+
     // The following functions are overrides required by Solidity.
 
     function tokenURI(
